@@ -1,0 +1,182 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║              🏏 CRICKET SCORE SERVER - START HERE 🏏                      ║
+║                                                                            ║
+║                   USA vs Namibia Match Ready to Stream                    ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+✅ EVERYTHING IS READY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your cricket score server has been created and tested with your USA vs NAM
+match. All files are in: /Users/user/Downloads/files/
+
+
+🚀 SUPER QUICK START (3 commands)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Install (one time only):
+   $ npm install
+
+2. Start the server:
+   $ node live_score_server.js "https://www.cricbuzz.com/live-cricket-scores/139205/usa-vs-nam-26th-match-group-a-icc-mens-t20-world-cup-2026"
+
+3. Add to OBS:
+   Browser Source → file:///Users/user/Downloads/files/cricket_overlay.html
+
+
+✨ WHAT YOU GET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Live cricket score updates every 10 seconds
+✓ Beautiful overlay that appears in OBS
+✓ JSON API at localhost:5555/score
+✓ Dashboard at http://localhost:5555/
+✓ Error handling and timestamps
+✓ Tested with USA vs NAM match (confirmed working)
+
+
+📁 FILES YOU HAVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Core Files (what you need):
+  • live_score_server.js .......... The Node.js server (run this)
+  • cricket_overlay.html ......... OBS Browser Source (use this URL)
+  • package.json ................. Dependencies
+
+Documentation (helpful):
+  • START_HERE.txt ............... This file
+  • QUICK_START.md ............... 4-step quick start
+  • SETUP_USA_NAM.md ............ Your match setup (tested!)
+  • README.md .................... Full documentation
+  • COMMANDS.txt ................ Command reference
+  • FILES_OVERVIEW.txt .......... File descriptions
+
+
+🔧 HOW IT WORKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Node.js Server (live_score_server.js)
+   - Scrapes Cricbuzz page every 10 seconds
+   - Extracts: Match title, Score, Status
+   - Serves JSON at http://localhost:5555/score
+
+2. OBS Overlay (cricket_overlay.html)
+   - Fetches from server every 10 seconds
+   - Displays score beautifully in OBS
+   - Shows timestamp and errors if any
+   - No manual refresh needed
+
+3. Auto-Update
+   - Score updates automatically
+   - Overlay updates automatically
+   - You just stream!
+
+
+📊 EXAMPLE OUTPUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Terminal (server output):
+  ✓ Score updated at 4:32:56 PM
+    Match: United States of America vs Namibia, 26th Match, Group A...
+    Score: 199-4
+    Status: Live
+
+OBS Overlay shows:
+  ┌─────────────────────────────┐
+  │ USA vs Namibia, 26th Match  │
+  │          199-4              │
+  │          Live               │
+  │ Last updated: 4:32:56 PM    │
+  └─────────────────────────────┘
+
+
+🎬 STEP BY STEP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Install Dependencies
+  $ cd /Users/user/Downloads/files
+  $ npm install
+  (wait for "added 68 packages")
+
+Step 2: Start Server
+  $ node live_score_server.js "https://www.cricbuzz.com/live-cricket-scores/139205/usa-vs-nam-26th-match-group-a-icc-mens-t20-world-cup-2026"
+  (should show "Cricket Score Server started")
+
+Step 3: Verify It Works (optional, in another terminal)
+  $ curl http://localhost:5555/score
+  (should show JSON with score data)
+
+Step 4: Add to OBS
+  • Click + to add new source
+  • Select "Browser"
+  • Paste: file:///Users/user/Downloads/files/cricket_overlay.html
+  • Size: 450x300
+  • Click OK
+  • Drag to position on canvas
+
+Step 5: Start Streaming!
+  The overlay will auto-update every 10 seconds
+
+
+⚠️ COMMON ISSUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Command not found: npm"
+→ Install Node.js from nodejs.org
+
+"Cannot connect to server" in overlay
+→ Is the Node.js server running? Check terminal
+→ Run: curl http://localhost:5555/score to verify
+
+OBS shows blank
+→ Use file:/// (three slashes) not http://
+→ Check the path is correct and .html file exists
+
+Score doesn't update
+→ Is the match live? Check Cricbuzz directly
+→ Restart the server (Ctrl+C, then run again)
+
+
+💻 WHAT YOU NEED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Node.js (v14+) - to run the server
+✓ npm - to install jsdom dependency
+✓ OBS Studio - to add the overlay
+✓ Internet connection - to scrape Cricbuzz
+✓ Port 5555 available - for the server
+
+
+📖 MORE HELP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For more info, read:
+  • QUICK_START.md - Fast setup (this approach)
+  • SETUP_USA_NAM.md - Detailed setup for your match
+  • COMMANDS.txt - All commands reference
+  • README.md - Complete documentation
+
+
+🎯 YOUR MATCH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Match: United States of America vs Namibia
+Event: 26th Match, Group A, ICC Men's T20 World Cup 2026
+Status: TESTED AND WORKING ✓
+Score: 199-4 (last updated)
+Link: https://www.cricbuzz.com/live-cricket-scores/139205/usa-vs-nam-26th-match-group-a-icc-mens-t20-world-cup-2026
+
+
+════════════════════════════════════════════════════════════════════════════
+                              READY TO STREAM! 🏏
+════════════════════════════════════════════════════════════════════════════
+
+Next step: Run the server command from Step 2 above, then add the overlay
+to OBS from Step 4.
+
+Questions? Check the documentation files above.
+
+Good luck! 🎬

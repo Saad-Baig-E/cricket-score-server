@@ -1,0 +1,26 @@
+{
+  "name": "cricket-score-server",
+  "version": "1.0.0",
+  "description": "Live cricket score scraper from Cricbuzz for OBS overlay",
+  "main": "live_score_server.js",
+  "scripts": {
+    "start": "node live_score_server.js",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [
+    "cricket",
+    "cricbuzz",
+    "live-scores",
+    "obs",
+    "overlay",
+    "scraper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "jsdom": "^23.0.0"
+  }
+}
