@@ -2,7 +2,6 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
 const url = require('url');
 
 // ========== CRASH PROTECTION ==========
@@ -583,77 +582,14 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({ error: 'Invalid URL. Must be a cricbuzz.com URL.' }));
       }
 
-    } else if (parsedUrl.pathname === '/') {
-      const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Cricket Score API</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            h1 { color: #333; }
-            .status { padding: 10px; background: #e8f5e9; border-left: 4px solid #4caf50; margin: 10px 0; }
-            .endpoint { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; }
-            .data { background: #fafafa; padding: 15px; border-radius: 4px; margin: 10px 0; max-height: 500px; overflow-y: auto; }
-            pre { overflow-x: auto; font-size: 12px; }
-            .links a { display: inline-block; margin: 5px 10px 5px 0; padding: 8px 16px; background: #1976d2; color: white; border-radius: 4px; text-decoration: none; }
-            .links a:hover { background: #1565c0; }
-            .change-match { margin: 15px 0; }
-            .change-match input { padding: 8px; width: 60%; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-            .change-match button { padding: 8px 16px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Cricket Score API v2</h1>
-            <div class="status">
-              <strong>Status:</strong> Server running on port ${PORT}<br>
-              <strong>Data source:</strong> Cricbuzz RSC Parser
-            </div>
+    // Get current match URL
+    } else if (parsedUrl.pathname === '/get-match') {
+      res.writeHead(200);
+      res.end(JSON.stringify({ matchUrl: matchUrl || '' }));
 
-            <h2>Overlay Pages</h2>
-            <div class="links">
-              <a href="/overlay">Score Overlay</a>
-              <a href="/stats">Stats Overlay</a>
-              <a href="/livebar">Live Bar</a>
-            </div>
-
-            <h2>API Endpoint</h2>
-            <div class="endpoint">GET /score</div>
-
-            <h2>Change Match</h2>
-            <div class="change-match">
-              <input type="text" id="matchInput" placeholder="Paste Cricbuzz match URL..." value="${matchUrl || ''}">
-              <button onclick="changeMatch()">Update Match</button>
-              <p id="matchStatus"></p>
-            </div>
-
-            <h2>Current Data</h2>
-            <div class="data">
-              <pre id="scoreData">${jsonStr}</pre>
-            </div>
-          </div>
-          <script>
-            async function changeMatch() {
-              const url = document.getElementById('matchInput').value;
-              const res = await fetch('/set-match?url=' + encodeURIComponent(url));
-              const data = await res.json();
-              document.getElementById('matchStatus').textContent = data.message || data.error;
-            }
-            setInterval(async () => {
-              try {
-                const res = await fetch('/score');
-                const data = await res.json();
-                document.getElementById('scoreData').textContent = JSON.stringify(data, null, 2);
-              } catch(e) {}
-            }, 2000);
-          </script>
-        </body>
-        </html>
-      `;
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(html);
+    // Dashboard and root both serve the match control UI
+    } else if (parsedUrl.pathname === '/' || parsedUrl.pathname === '/dashboard') {
+      return serveHtmlFile(res, 'dashboard.html');
     } else {
       res.writeHead(404);
       res.end('{"error":"Not found"}');
@@ -664,35 +600,13 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// Prompt for match URL if not provided
-async function getMatchUrl() {
-  if (matchUrl) {
-    console.log(`Using match URL: ${matchUrl}\n`);
-    return;
-  }
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
-  return new Promise((resolve) => {
-    rl.question('Enter Cricbuzz match URL: ', (input) => {
-      matchUrl = input.trim();
-      rl.close();
-      resolve();
-    });
-  });
-}
-
 // Start server and periodic updates
 async function start() {
-  await getMatchUrl();
-
-  if (!matchUrl || !matchUrl.includes('cricbuzz.com')) {
-    console.error('Invalid Cricbuzz URL. Please provide a valid match URL.');
-    console.error('Example: https://www.cricbuzz.com/live-cricket-scores/139216/ind-vs-pak-27th-match-group-a-icc-mens-t20-world-cup-2026');
-    process.exit(1);
+  // Match URL is optional at startup — user can set it from the dashboard
+  if (matchUrl) {
+    console.log(`Using match URL: ${matchUrl}\n`);
+  } else {
+    console.log('No match URL configured. Set one from the dashboard.\n');
   }
 
   server.on('error', (err) => {
@@ -704,20 +618,24 @@ async function start() {
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`\nCricket Score Server v2 started on port ${PORT}`);
-    console.log(`Score API: http://localhost:${PORT}/score`);
     console.log(`Dashboard: http://localhost:${PORT}/`);
+    console.log(`Score API: http://localhost:${PORT}/score`);
     console.log(`Overlay:   http://localhost:${PORT}/overlay`);
     console.log(`Stats:     http://localhost:${PORT}/stats`);
     console.log(`Live Bar:  http://localhost:${PORT}/livebar\n`);
-    console.log('Fetching initial data...\n');
   });
 
-  // Initial fetch (guarded)
-  try { await fetchCricbuzzScore(); } catch(e) { console.error('Initial fetch error:', e.message); }
+  // Initial fetch if match URL is already set
+  if (matchUrl) {
+    console.log('Fetching initial data...\n');
+    try { await fetchCricbuzzScore(); } catch(e) { console.error('Initial fetch error:', e.message); }
+  }
 
   // Update every 2 seconds for ball-by-ball accuracy (guarded — never crashes the process)
   setInterval(async () => {
-    try { await fetchCricbuzzScore(); } catch(e) { console.error('[FETCH LOOP ERROR]', e.message); }
+    if (matchUrl) {
+      try { await fetchCricbuzzScore(); } catch(e) { console.error('[FETCH LOOP ERROR]', e.message); }
+    }
   }, 2000);
 }
 

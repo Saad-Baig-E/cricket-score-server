@@ -6,7 +6,5 @@ services:
     buildCommand: npm install
     startCommand: node live_score_server.js
     envVars:
-      - key: MATCH_URL
-        value: https://www.cricbuzz.com/live-cricket-scores/139296/pak-vs-nam-35th-match-group-a-icc-mens-t20-world-cup-2026
       - key: NODE_ENV
         value: production
