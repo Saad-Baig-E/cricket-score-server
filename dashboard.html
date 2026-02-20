@@ -655,6 +655,161 @@
       z-index: 2;
     }
 
+    /* Custom Overlay Upload */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .upload-zone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: var(--surface-2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-zone:hover .upload-zone-icon {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .upload-zone-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .upload-zone-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Custom overlay items */
+    .custom-overlay-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: all 0.15s;
+    }
+
+    .custom-overlay-item:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: var(--surface-2);
+    }
+
+    .custom-overlay-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .custom-overlay-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .custom-overlay-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .custom-overlay-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      gap: 12px;
+    }
+
+    .custom-overlay-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+
+    .btn-danger {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .btn-danger:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .custom-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .custom-empty {
+      text-align: center;
+      padding: 16px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .custom-separator {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    .overlay-option .custom-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--yellow);
+    }
+
     /* Recent Matches */
     .recent-list {
       display: flex;
@@ -906,6 +1061,32 @@
       <div class="overlay-preview-frame" id="overlayPreview" style="display:none">
         <div class="overlay-preview-label">Live Preview</div>
         <iframe id="overlayIframe" src=""></iframe>
+      </div>
+    </div>
+
+    <!-- Custom Overlays -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Custom Overlays
+        </div>
+        <div class="card-badge badge-idle" id="customBadge">0 uploaded</div>
+      </div>
+
+      <!-- Upload zone -->
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-zone-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-zone-title">Upload HTML Overlay</div>
+        <div class="upload-zone-desc">Drag & drop or click to upload your own .html overlay file</div>
+        <input type="file" id="fileInput" accept=".html,.htm" onchange="handleFileSelect(event)">
+      </div>
+
+      <!-- Uploaded list -->
+      <div class="custom-list" id="customList">
+        <div class="custom-empty">No custom overlays uploaded yet</div>
       </div>
     </div>
 
@@ -1311,6 +1492,179 @@
       }
     }
 
+    // --- Custom overlays ---
+    let customOverlays = [];
+
+    async function loadCustomOverlays() {
+      try {
+        const res = await fetch(BASE_URL + '/api/overlays');
+        const data = await res.json();
+        customOverlays = data.overlays || [];
+        renderCustomList();
+        renderCustomOverlayOptions();
+      } catch(e) {
+        console.log('Could not load custom overlays');
+      }
+    }
+
+    function renderCustomList() {
+      const list = document.getElementById('customList');
+      const badge = document.getElementById('customBadge');
+      badge.textContent = customOverlays.length + ' uploaded';
+
+      if (customOverlays.length === 0) {
+        list.innerHTML = '<div class="custom-empty">No custom overlays uploaded yet</div>';
+        return;
+      }
+
+      list.innerHTML = customOverlays.map(o => {
+        const sizeKB = (o.size / 1024).toFixed(0);
+        const date = new Date(o.modified).toLocaleDateString();
+        return `<div class="custom-overlay-item">
+          <div class="custom-overlay-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="custom-overlay-details">
+            <div class="custom-overlay-name">${o.name}</div>
+            <div class="custom-overlay-meta">
+              <span>${sizeKB} KB</span>
+              <span>${date}</span>
+            </div>
+          </div>
+          <div class="custom-overlay-actions">
+            <button class="btn-icon" title="Copy URL" onclick="copyOverlayUrl(this, '${o.url}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="${o.url}" target="_blank" class="btn-icon" title="Open" style="text-decoration:none">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+            </a>
+            <button class="btn-danger" title="Delete" onclick="deleteCustomOverlay('${o.name}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Inject custom overlays into the overlay selector
+    function renderCustomOverlayOptions() {
+      // Remove any previously injected custom options
+      document.querySelectorAll('.overlay-option.custom-injected').forEach(el => el.remove());
+
+      if (customOverlays.length === 0) return;
+
+      const overlayList = document.querySelector('.overlay-list');
+      customOverlays.forEach(o => {
+        const div = document.createElement('div');
+        div.className = 'overlay-option custom-injected';
+        div.setAttribute('data-path', o.url);
+        div.setAttribute('onclick', 'selectOverlay(this)');
+        div.innerHTML = `
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              ${o.name}
+              <span class="custom-tag">Custom</span>
+            </div>
+            <div class="overlay-desc">Custom uploaded overlay &middot; ${(o.size / 1024).toFixed(0)} KB</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '${o.url}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="${o.url}" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        `;
+        overlayList.appendChild(div);
+      });
+
+      // Re-apply selection if a custom overlay was previously selected
+      restoreOverlaySelection();
+    }
+
+    // File upload handler
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      uploadFile(file);
+      event.target.value = ''; // Reset so same file can be re-uploaded
+    }
+
+    async function uploadFile(file) {
+      if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+        showToast('Only .html files are allowed', 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('File too large (max 5MB)', 'error');
+        return;
+      }
+
+      const name = file.name.replace(/\.(html|htm)$/, '');
+      const content = await file.text();
+
+      try {
+        const res = await fetch(BASE_URL + '/api/overlays?name=' + encodeURIComponent(name), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/html' },
+          body: content
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('"' + data.name + '" uploaded successfully!', 'success');
+          await loadCustomOverlays();
+        } else {
+          showToast(data.error || 'Upload failed', 'error');
+        }
+      } catch(e) {
+        showToast('Upload failed — cannot connect to server', 'error');
+      }
+    }
+
+    async function deleteCustomOverlay(name) {
+      if (!confirm('Delete overlay "' + name + '"? This cannot be undone.')) return;
+
+      try {
+        const res = await fetch(BASE_URL + '/api/overlays/' + encodeURIComponent(name), {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('"' + name + '" deleted', 'success');
+          // If this was selected, clear selection
+          if (selectedOverlayPath === '/custom/' + name) {
+            selectedOverlayPath = '';
+            localStorage.removeItem('railokatta_selected_overlay');
+            document.getElementById('overlayBadge').className = 'card-badge badge-idle';
+            document.getElementById('overlayBadge').textContent = 'Select one';
+            document.getElementById('overlayUrlBar').classList.remove('visible');
+            document.getElementById('overlayPreview').style.display = 'none';
+            document.querySelectorAll('.overlay-option').forEach(o => o.classList.remove('selected'));
+          }
+          await loadCustomOverlays();
+        } else {
+          showToast(data.error || 'Delete failed', 'error');
+        }
+      } catch(e) {
+        showToast('Delete failed', 'error');
+      }
+    }
+
+    // Drag & drop on upload zone
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('drag-over'); });
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) uploadFile(file);
+    });
+
     // --- Enter key to submit ---
     matchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') updateMatch();
@@ -1318,6 +1672,7 @@
 
     // --- Start ---
     init();
+    loadCustomOverlays();
     restoreOverlaySelection();
   </script>
 </body>

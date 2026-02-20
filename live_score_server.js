@@ -37,6 +37,12 @@ let scoreData = {
 
 const PORT = process.env.PORT || 5555;
 
+// Custom overlays directory
+const CUSTOM_OVERLAYS_DIR = path.join(__dirname, 'custom_overlays');
+if (!fs.existsSync(CUSTOM_OVERLAYS_DIR)) {
+  fs.mkdirSync(CUSTOM_OVERLAYS_DIR, { recursive: true });
+}
+
 // Extract match ID from Cricbuzz URL
 function extractMatchId(matchUrl) {
   const match = matchUrl.match(/live-cricket-scores\/(\d+)|cricket-match\/(\d+)|\/(\d+)\//);
@@ -542,7 +548,8 @@ const server = http.createServer(async (req, res) => {
 
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
@@ -586,6 +593,80 @@ const server = http.createServer(async (req, res) => {
     } else if (parsedUrl.pathname === '/get-match') {
       res.writeHead(200);
       res.end(JSON.stringify({ matchUrl: matchUrl || '' }));
+
+    // List custom overlays
+    } else if (parsedUrl.pathname === '/api/overlays' && req.method === 'GET') {
+      try {
+        const files = fs.readdirSync(CUSTOM_OVERLAYS_DIR).filter(f => f.endsWith('.html'));
+        const overlays = files.map(f => {
+          const stat = fs.statSync(path.join(CUSTOM_OVERLAYS_DIR, f));
+          return {
+            name: f.replace('.html', ''),
+            filename: f,
+            size: stat.size,
+            modified: stat.mtime.toISOString(),
+            url: '/custom/' + encodeURIComponent(f.replace('.html', ''))
+          };
+        });
+        res.writeHead(200);
+        res.end(JSON.stringify({ overlays }));
+      } catch(e) {
+        res.writeHead(200);
+        res.end(JSON.stringify({ overlays: [] }));
+      }
+
+    // Upload custom overlay (POST with raw HTML body)
+    } else if (parsedUrl.pathname === '/api/overlays' && req.method === 'POST') {
+      const name = parsedUrl.query.name;
+      if (!name || !/^[a-zA-Z0-9_\-\s]+$/.test(name)) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: 'Invalid name. Use letters, numbers, spaces, hyphens, underscores.' }));
+        return;
+      }
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk;
+        if (body.length > 5 * 1024 * 1024) { req.destroy(); } // 5MB limit
+      });
+      req.on('end', () => {
+        if (!body || body.length < 10) {
+          res.writeHead(400);
+          res.end(JSON.stringify({ error: 'Empty or invalid HTML content.' }));
+          return;
+        }
+        const safeName = name.trim().replace(/\s+/g, '_');
+        const filePath = path.join(CUSTOM_OVERLAYS_DIR, safeName + '.html');
+        fs.writeFileSync(filePath, body, 'utf8');
+        console.log(`[CUSTOM OVERLAY] Saved: ${safeName}.html (${body.length} bytes)`);
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, name: safeName, url: '/custom/' + safeName }));
+      });
+      return;
+
+    // Delete custom overlay
+    } else if (parsedUrl.pathname.startsWith('/api/overlays/') && req.method === 'DELETE') {
+      const name = decodeURIComponent(parsedUrl.pathname.replace('/api/overlays/', ''));
+      const filePath = path.join(CUSTOM_OVERLAYS_DIR, name + '.html');
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        console.log(`[CUSTOM OVERLAY] Deleted: ${name}.html`);
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true }));
+      } else {
+        res.writeHead(404);
+        res.end(JSON.stringify({ error: 'Overlay not found.' }));
+      }
+
+    // Serve custom overlay files
+    } else if (parsedUrl.pathname.startsWith('/custom/')) {
+      const name = decodeURIComponent(parsedUrl.pathname.replace('/custom/', ''));
+      const filePath = path.join(CUSTOM_OVERLAYS_DIR, name + '.html');
+      if (fs.existsSync(filePath)) {
+        return serveHtmlFile(res, path.join('custom_overlays', name + '.html'));
+      } else {
+        res.writeHead(404);
+        res.end('{"error":"Custom overlay not found"}');
+      }
 
     // Dashboard and root both serve the match control UI
     } else if (parsedUrl.pathname === '/' || parsedUrl.pathname === '/dashboard') {
