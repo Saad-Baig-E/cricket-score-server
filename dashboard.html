@@ -1043,6 +1043,204 @@
             </a>
           </div>
         </div>
+
+        <!-- Bowling Attack -->
+        <div class="overlay-option" data-path="/bowling" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Bowling Attack
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Bowling figures for all bowlers with economy rates, current spell highlighted. Perfect for between-overs analysis.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/bowling')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/bowling" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Batting Card -->
+        <div class="overlay-option" data-path="/batting" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M4 20L20 4"/><path d="M4 4l4 4"/></svg>
+              Batting Scorecard
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Full batting card with runs, balls, boundaries, strike rate, dismissals, extras and total. Active batsmen highlighted.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/batting')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/batting" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Partnership Tracker -->
+        <div class="overlay-option" data-path="/partnership" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              Partnership Tracker
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Current partnership progress bar with both batsmen stats, plus fall of wickets history cards.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/partnership')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/partnership" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Manhattan Chart -->
+        <div class="overlay-option" data-path="/manhattan" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="17" y="4" width="4" height="16"/></svg>
+              Manhattan Chart
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Over-by-over run rate bar chart. Wicket overs in red, 10+ run overs in gold. Shows CRR, RRR and target.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/manhattan')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/manhattan" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Head to Head -->
+        <div class="overlay-option" data-path="/headtohead" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M16 3l5 5-5 5"/><path d="M8 3L3 8l5 5"/></svg>
+              Head to Head
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Side-by-side team comparison with run rate, boundaries, sixes, wickets and extras visual bars.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/headtohead')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/headtohead" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Fall of Wickets -->
+        <div class="overlay-option" data-path="/fow" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Fall of Wickets
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Visual timeline showing when each wicket fell with score, over and batsman name. Current score marker tracks progress.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/fow')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/fow" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Key Moments -->
+        <div class="overlay-option" data-path="/keymoments" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Key Moments
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Live ticker of key events — wickets, sixes, fours with color-coded badges. Most recent highlighted at top.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/keymoments')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/keymoments" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- This Over -->
+        <div class="overlay-option" data-path="/thisover" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              This Over
+              <span class="overlay-tag">Full Screen</span>
+            </div>
+            <div class="overlay-desc">Large ball-by-ball circles for the current over with color coding — dots, fours, sixes, wickets. Over summary below.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/thisover')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/thisover" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
+
+        <!-- Player Milestone -->
+        <div class="overlay-option" data-path="/playercard" onclick="selectOverlay(this)">
+          <div class="overlay-radio"><div class="overlay-radio-dot"></div></div>
+          <div class="overlay-info">
+            <div class="overlay-name">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Player Milestone
+              <span class="overlay-tag">Auto Pop-up</span>
+            </div>
+            <div class="overlay-desc">Auto-detects 50s, 100s, and 3/5 wicket hauls. Shows a pop-up card with player stats for 12 seconds then hides.</div>
+          </div>
+          <div class="overlay-actions">
+            <button class="btn-icon" title="Copy OBS URL" onclick="event.stopPropagation(); copyOverlayUrl(this, '/playercard')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <a href="/playercard" target="_blank" class="btn-open" onclick="event.stopPropagation()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+              Open
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- OBS URL bar (shown after selecting) -->

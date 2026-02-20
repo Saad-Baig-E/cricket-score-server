@@ -573,6 +573,24 @@ const server = http.createServer(async (req, res) => {
       return serveHtmlFile(res, 'cricket_stats.html');
     } else if (parsedUrl.pathname === '/livebar') {
       return serveHtmlFile(res, 'Record_with_live_bar.html');
+    } else if (parsedUrl.pathname === '/bowling') {
+      return serveHtmlFile(res, 'bowling_attack.html');
+    } else if (parsedUrl.pathname === '/batting') {
+      return serveHtmlFile(res, 'batting_card.html');
+    } else if (parsedUrl.pathname === '/partnership') {
+      return serveHtmlFile(res, 'partnership_tracker.html');
+    } else if (parsedUrl.pathname === '/manhattan') {
+      return serveHtmlFile(res, 'run_rate_graph.html');
+    } else if (parsedUrl.pathname === '/headtohead') {
+      return serveHtmlFile(res, 'head_to_head.html');
+    } else if (parsedUrl.pathname === '/fow') {
+      return serveHtmlFile(res, 'fow_timeline.html');
+    } else if (parsedUrl.pathname === '/keymoments') {
+      return serveHtmlFile(res, 'key_moments.html');
+    } else if (parsedUrl.pathname === '/thisover') {
+      return serveHtmlFile(res, 'this_over.html');
+    } else if (parsedUrl.pathname === '/playercard') {
+      return serveHtmlFile(res, 'player_card.html');
 
     // Change match URL without redeploying (GET /set-match?url=CRICBUZZ_URL)
     } else if (parsedUrl.pathname === '/set-match') {
@@ -699,11 +717,21 @@ async function start() {
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`\nCricket Score Server v2 started on port ${PORT}`);
-    console.log(`Dashboard: http://localhost:${PORT}/`);
-    console.log(`Score API: http://localhost:${PORT}/score`);
-    console.log(`Overlay:   http://localhost:${PORT}/overlay`);
-    console.log(`Stats:     http://localhost:${PORT}/stats`);
-    console.log(`Live Bar:  http://localhost:${PORT}/livebar\n`);
+    console.log(`Dashboard:    http://localhost:${PORT}/`);
+    console.log(`Score API:    http://localhost:${PORT}/score`);
+    console.log(`--- Overlays ---`);
+    console.log(`Score Overlay: http://localhost:${PORT}/overlay`);
+    console.log(`Stats Panel:   http://localhost:${PORT}/stats`);
+    console.log(`Live Bar:      http://localhost:${PORT}/livebar`);
+    console.log(`Bowling:       http://localhost:${PORT}/bowling`);
+    console.log(`Batting:       http://localhost:${PORT}/batting`);
+    console.log(`Partnership:   http://localhost:${PORT}/partnership`);
+    console.log(`Manhattan:     http://localhost:${PORT}/manhattan`);
+    console.log(`Head to Head:  http://localhost:${PORT}/headtohead`);
+    console.log(`Fall of Wkts:  http://localhost:${PORT}/fow`);
+    console.log(`Key Moments:   http://localhost:${PORT}/keymoments`);
+    console.log(`This Over:     http://localhost:${PORT}/thisover`);
+    console.log(`Player Card:   http://localhost:${PORT}/playercard\n`);
   });
 
   // Initial fetch if match URL is already set

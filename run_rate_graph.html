@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Run Rate Graph - RAILOKATTA LIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+        :root {
+            --primary-green: #00ff88;
+            --primary-blue: #00bfff;
+            --dark-bg: #0a1a0a;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --scoreboard-bg: rgba(0, 0, 0, 0.9);
+            --scoreboard-text: #ffffff;
+            --highlight-red: #ff0033;
+            --font-main: 'Montserrat', 'Arial Black', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Roboto Condensed', Arial, sans-serif; background: transparent; position: relative; }
+
+        .stadium-bg { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(0,30,15,0.6) 50%, var(--dark-bg) 100%); pointer-events: none; }
+        .light-streak { position: absolute; height: 4px; background: linear-gradient(90deg, transparent 0%, var(--primary-green) 50%, transparent 100%); opacity: 0.6; animation: slideRight 3s ease-in-out infinite; }
+        .light-streak.top { top: 50px; width: 800px; left: -800px; }
+        .light-streak.middle { top: 150px; width: 600px; left: -600px; background: linear-gradient(90deg, transparent 0%, var(--primary-blue) 50%, transparent 100%); animation-delay: 1s; }
+        .light-streak.bottom-left { bottom: 200px; width: 700px; right: -700px; animation: slideLeft 3s ease-in-out infinite; animation-delay: 2s; }
+        @keyframes slideRight { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(2500px); opacity: 0; } }
+        @keyframes slideLeft { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(-2500px); opacity: 0; } }
+        .top-curve { position: absolute; top: 0; left: 0; right: 0; height: 200px; background: linear-gradient(180deg, var(--overlay-dark) 0%, transparent 100%); border-bottom: 3px solid var(--primary-green); clip-path: ellipse(100% 100% at 50% 0%); }
+        .logo-container { position: absolute; top: 30px; left: 40px; width: 120px; height: 120px; background: transparent; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid var(--primary-green); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); animation: pulse 2s ease-in-out infinite; z-index: 10; }
+        .logo-container img { max-width: 100px; max-height: 100px; object-fit: contain; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); } 50% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.6); } }
+        .main-banner { position: absolute; top: 30px; right: 40px; background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); padding: 14px 40px; border-radius: 12px; border: 2px solid var(--primary-green); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); display: flex; align-items: center; gap: 15px; }
+        .banner-title { font-family: var(--font-display); font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-green); font-style: italic; }
+        .banner-live { background: var(--highlight-red); color: white; padding: 6px 18px; border-radius: 6px; font-size: 22px; font-weight: 900; animation: liveGlow 1.5s ease-in-out infinite; }
+        @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 20px var(--highlight-red); } 50% { box-shadow: 0 0 40px var(--highlight-red); } }
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-text { color: var(--primary-green); font-size: 28px; font-weight: 700; }
+
+        /* ========== PANEL ========== */
+        .panel-container { position: absolute; top: 180px; left: 80px; right: 80px; bottom: 60px; display: flex; flex-direction: column; }
+        .panel-header { background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); border: 2px solid var(--primary-green); border-bottom: none; border-radius: 16px 16px 0 0; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-title { font-family: var(--font-display); font-size: 48px; color: #fff; letter-spacing: 4px; text-shadow: 0 0 15px var(--primary-green); }
+        .panel-subtitle { font-family: 'Roboto Mono', monospace; font-size: 24px; color: var(--primary-green); }
+        .match-score-badge { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--primary-green); border-radius: 8px; padding: 8px 20px; font-family: 'Roboto Mono', monospace; font-size: 22px; color: #fff; }
+
+        .panel-body { background: var(--scoreboard-bg); border: 2px solid rgba(0, 255, 136, 0.3); border-top: none; border-radius: 0 0 16px 16px; flex: 1; padding: 30px 40px; display: flex; flex-direction: column; }
+
+        /* Manhattan Chart */
+        .chart-area { flex: 1; display: flex; align-items: flex-end; gap: 4px; padding-bottom: 60px; position: relative; }
+
+        .chart-gridlines { position: absolute; top: 0; left: 0; right: 0; bottom: 60px; pointer-events: none; }
+        .gridline { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.06); }
+        .gridline-label { position: absolute; left: -30px; font-size: 14px; color: rgba(255,255,255,0.3); font-family: 'Roboto Mono', monospace; transform: translateY(-50%); }
+
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; min-width: 0; }
+        .bar {
+            width: 80%; border-radius: 4px 4px 0 0;
+            background: linear-gradient(180deg, var(--primary-green), rgba(0, 255, 136, 0.4));
+            transition: height 0.5s ease;
+            position: relative;
+            min-height: 2px;
+        }
+        .bar.wicket-over { background: linear-gradient(180deg, var(--highlight-red), rgba(255, 0, 51, 0.4)); }
+        .bar.high-scoring { background: linear-gradient(180deg, #ffd700, rgba(255, 215, 0, 0.4)); }
+
+        .bar-runs {
+            position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+            font-family: 'Roboto Mono', monospace; font-size: 16px; color: #fff;
+            font-weight: 700; white-space: nowrap;
+        }
+        .bar-over {
+            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+            font-family: 'Roboto Mono', monospace; font-size: 14px; color: rgba(255,255,255,0.4);
+        }
+
+        /* Stats footer */
+        .stats-footer {
+            display: flex; justify-content: center; gap: 60px;
+            margin-top: 20px; padding-top: 20px;
+            border-top: 2px solid rgba(0, 255, 136, 0.2);
+        }
+        .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .stat-label { font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--primary-green); text-transform: uppercase; letter-spacing: 2px; }
+        .stat-value { font-family: var(--font-display); font-size: 42px; color: #fff; }
+
+        /* Legend */
+        .legend { display: flex; gap: 30px; justify-content: center; margin-top: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 16px; color: rgba(255,255,255,0.5); }
+        .legend-color { width: 16px; height: 16px; border-radius: 3px; }
+        .legend-green { background: var(--primary-green); }
+        .legend-red { background: var(--highlight-red); }
+        .legend-gold { background: #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="stadium-bg"></div>
+    <div class="light-streak top"></div>
+    <div class="light-streak middle"></div>
+    <div class="light-streak bottom-left"></div>
+    <div class="top-curve"></div>
+    <div class="logo-container"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+    <div class="main-banner"><span class="banner-title">RAILOKATTA</span><span class="banner-live">LIVE</span></div>
+
+    <div class="loading-overlay" id="loadingOverlay"><span class="loading-text">Connecting to score server...</span></div>
+
+    <div class="panel-container" id="panelContainer" style="display:none;">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">MANHATTAN CHART</div>
+                <div class="panel-subtitle" id="panelSubtitle">--</div>
+            </div>
+            <div class="match-score-badge" id="scoreBadge">--</div>
+        </div>
+        <div class="panel-body">
+            <div class="chart-area" id="chartArea">
+                <div class="chart-gridlines" id="gridlines"></div>
+            </div>
+            <div class="stats-footer">
+                <div class="stat-item"><span class="stat-label">Current RR</span><span class="stat-value" id="statCRR">--</span></div>
+                <div class="stat-item"><span class="stat-label">Required RR</span><span class="stat-value" id="statRRR">--</span></div>
+                <div class="stat-item"><span class="stat-label">Target</span><span class="stat-value" id="statTarget">--</span></div>
+                <div class="stat-item"><span class="stat-label">Overs</span><span class="stat-value" id="statOvers">--</span></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color legend-green"></span> Normal Over</div>
+                <div class="legend-item"><span class="legend-color legend-red"></span> Wicket Over</div>
+                <div class="legend-item"><span class="legend-color legend-gold"></span> 10+ Runs</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
+        const REFRESH_INTERVAL = 1500;
+        const DEMO_FALLBACK_AFTER = 3;
+        let failedAttempts = 0, demoMode = false, isFirstLoad = true;
+
+        function getDemoData() {
+            return {
+                matchInfo: { description: 'India vs Pakistan, Super 4, Asia Cup 2025', status: 'Pakistan need 42 runs in 24 balls', state: 'InProgress' },
+                currentInnings: 2,
+                innings: [{ id: 2, battingTeam: 'Pakistan', score: 151, wickets: 4, overs: 16.0, runRate: '9.44' }],
+                miniscore: {
+                    recentOvers: '6 0 4 1 2 0 | 1 4 0 2 0 1 | 0 6 1 W 0 4 | 1 0 4 1 2 0 | 4 0 1 0 W 2 | 0 1 6 0 2 1 | 4 1 0 0 2 1 | 1 W 0 4 0 0 | 0 0 4 1 6 2 | 0 1 0 0 6 4 | 2 0 0 1 4 0 | 1 0 2 0 0 1 | 0 4 1 W 0 6 | 1 0 0 4 2 0 | 0 1 6 W 0 2 | 4 0 1',
+                    currentRunRate: 9.44, requiredRunRate: 10.50, target: 193
+                },
+                timestamp: new Date().toISOString(), error: null
+            };
+        }
+
+        function parseOversFromRecentString(str) {
+            if (!str) return [];
+            const parts = str.split('|').map(s => s.trim()).filter(s => s && s !== '...');
+            return parts.map(part => {
+                const balls = part.split(/\s+/).filter(b => b);
+                let runs = 0, hasWicket = false;
+                balls.forEach(b => {
+                    const upper = b.toUpperCase();
+                    if (upper === 'W') { hasWicket = true; return; }
+                    const num = parseInt(b);
+                    if (!isNaN(num)) runs += num;
+                    if (upper.includes('WD')) runs += 1;
+                    if (upper.includes('NB')) runs += 1;
+                });
+                return { runs, hasWicket, balls };
+            });
+        }
+
+        function processData(data) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('panelContainer').style.display = '';
+
+            const currentInn = data.innings && data.innings.length > 0 ? data.innings[data.innings.length - 1] : null;
+            const mini = data.miniscore;
+
+            const battingTeam = currentInn?.battingTeam || currentInn?.battingTeamShort || '--';
+            document.getElementById('panelSubtitle').textContent = battingTeam + ' Innings';
+            document.getElementById('scoreBadge').textContent = currentInn
+                ? `${battingTeam} ${currentInn.score}/${currentInn.wickets} (${currentInn.overs} ov)` : '--';
+
+            // Stats
+            document.getElementById('statCRR').textContent = mini?.currentRunRate ? parseFloat(mini.currentRunRate).toFixed(2) : (currentInn?.runRate || '--');
+            document.getElementById('statRRR').textContent = mini?.requiredRunRate ? parseFloat(mini.requiredRunRate).toFixed(2) : '--';
+            document.getElementById('statTarget').textContent = mini?.target || '--';
+            document.getElementById('statOvers').textContent = currentInn ? currentInn.overs : '--';
+
+            // Build Manhattan from recentOvers string
+            const overs = parseOversFromRecentString(mini?.recentOvers);
+            const chartArea = document.getElementById('chartArea');
+            const gridlines = document.getElementById('gridlines');
+
+            // Clear old bars but keep gridlines div
+            const oldBars = chartArea.querySelectorAll('.bar-container');
+            oldBars.forEach(b => b.remove());
+
+            if (overs.length === 0) return;
+
+            const maxRuns = Math.max(...overs.map(o => o.runs), 6);
+            const chartHeight = chartArea.clientHeight - 60;
+
+            // Gridlines
+            gridlines.innerHTML = '';
+            for (let r = 0; r <= maxRuns; r += 3) {
+                const pct = (r / maxRuns) * 100;
+                gridlines.innerHTML += `
+                    <div class="gridline" style="bottom:${pct}%">
+                        <span class="gridline-label">${r}</span>
+                    </div>
+                `;
+            }
+
+            // Calculate over numbers (work backwards from current over)
+            const totalOvers = currentInn ? Math.floor(currentInn.overs) : overs.length;
+            const startOver = Math.max(1, totalOvers - overs.length + 1);
+
+            overs.forEach((ov, idx) => {
+                const barHeight = maxRuns > 0 ? (ov.runs / maxRuns) * chartHeight : 0;
+                const overNum = startOver + idx;
+                const barClass = ov.hasWicket ? 'wicket-over' : ov.runs >= 10 ? 'high-scoring' : '';
+
+                const container = document.createElement('div');
+                container.className = 'bar-container';
+                container.innerHTML = `
+                    <div class="bar ${barClass}" style="height:${barHeight}px">
+                        <span class="bar-runs">${ov.runs}</span>
+                    </div>
+                    <span class="bar-over">${overNum}</span>
+                `;
+                chartArea.appendChild(container);
+            });
+
+            isFirstLoad = false;
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                failedAttempts = 0;
+                if (demoMode) demoMode = false;
+                processData(data);
+            } catch (e) {
+                failedAttempts++;
+                if (failedAttempts >= DEMO_FALLBACK_AFTER && !demoMode) demoMode = true;
+                if (demoMode) processData(getDemoData());
+                else if (isFirstLoad) document.querySelector('.loading-text').textContent = `Connecting... (attempt ${failedAttempts})`;
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>

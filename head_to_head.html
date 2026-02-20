@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Head to Head - RAILOKATTA LIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+        :root {
+            --primary-green: #00ff88;
+            --primary-blue: #00bfff;
+            --dark-bg: #0a1a0a;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --scoreboard-bg: rgba(0, 0, 0, 0.9);
+            --highlight-red: #ff0033;
+            --font-main: 'Montserrat', 'Arial Black', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Roboto Condensed', Arial, sans-serif; background: transparent; position: relative; }
+
+        .stadium-bg { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(0,30,15,0.6) 50%, var(--dark-bg) 100%); pointer-events: none; }
+        .light-streak { position: absolute; height: 4px; background: linear-gradient(90deg, transparent 0%, var(--primary-green) 50%, transparent 100%); opacity: 0.6; animation: slideRight 3s ease-in-out infinite; }
+        .light-streak.top { top: 50px; width: 800px; left: -800px; }
+        .light-streak.middle { top: 150px; width: 600px; left: -600px; background: linear-gradient(90deg, transparent 0%, var(--primary-blue) 50%, transparent 100%); animation-delay: 1s; }
+        .light-streak.bottom-left { bottom: 200px; width: 700px; right: -700px; animation: slideLeft 3s ease-in-out infinite; animation-delay: 2s; }
+        @keyframes slideRight { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(2500px); opacity: 0; } }
+        @keyframes slideLeft { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(-2500px); opacity: 0; } }
+        .top-curve { position: absolute; top: 0; left: 0; right: 0; height: 200px; background: linear-gradient(180deg, var(--overlay-dark) 0%, transparent 100%); border-bottom: 3px solid var(--primary-green); clip-path: ellipse(100% 100% at 50% 0%); }
+        .logo-container { position: absolute; top: 30px; left: 40px; width: 120px; height: 120px; background: transparent; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid var(--primary-green); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); animation: pulse 2s ease-in-out infinite; z-index: 10; }
+        .logo-container img { max-width: 100px; max-height: 100px; object-fit: contain; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); } 50% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.6); } }
+        .main-banner { position: absolute; top: 30px; right: 40px; background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); padding: 14px 40px; border-radius: 12px; border: 2px solid var(--primary-green); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); display: flex; align-items: center; gap: 15px; }
+        .banner-title { font-family: var(--font-display); font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-green); font-style: italic; }
+        .banner-live { background: var(--highlight-red); color: white; padding: 6px 18px; border-radius: 6px; font-size: 22px; font-weight: 900; animation: liveGlow 1.5s ease-in-out infinite; }
+        @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 20px var(--highlight-red); } 50% { box-shadow: 0 0 40px var(--highlight-red); } }
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-text { color: var(--primary-green); font-size: 28px; font-weight: 700; }
+
+        /* ========== PANEL ========== */
+        .panel-container { position: absolute; top: 180px; left: 80px; right: 80px; bottom: 60px; display: flex; flex-direction: column; }
+        .panel-header { background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); border: 2px solid var(--primary-green); border-bottom: none; border-radius: 16px 16px 0 0; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-title { font-family: var(--font-display); font-size: 48px; color: #fff; letter-spacing: 4px; text-shadow: 0 0 15px var(--primary-green); }
+        .panel-subtitle { font-family: 'Roboto Mono', monospace; font-size: 24px; color: var(--primary-green); }
+
+        .panel-body { background: var(--scoreboard-bg); border: 2px solid rgba(0, 255, 136, 0.3); border-top: none; border-radius: 0 0 16px 16px; flex: 1; padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+
+        /* Teams header */
+        .teams-row {
+            display: flex; justify-content: center; align-items: center; gap: 60px;
+        }
+        .team-block {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            min-width: 350px;
+        }
+        .team-name {
+            font-family: var(--font-display); font-size: 72px; color: #fff;
+            letter-spacing: 4px;
+        }
+        .team-score {
+            font-family: 'Roboto Mono', monospace; font-size: 48px; color: var(--primary-green);
+        }
+        .team-overs { font-size: 24px; color: rgba(255,255,255,0.5); }
+        .team-block.batting .team-name { text-shadow: 0 0 20px var(--primary-green); }
+
+        .vs-badge {
+            font-family: var(--font-display); font-size: 56px; color: var(--highlight-red);
+            text-shadow: 0 0 20px var(--highlight-red);
+            padding: 10px 20px;
+        }
+
+        /* Comparison bars */
+        .comparison-section { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+        .comp-row {
+            display: flex; align-items: center; gap: 0;
+            height: 50px;
+        }
+        .comp-val-left {
+            width: 120px; text-align: right; padding-right: 16px;
+            font-family: 'Roboto Mono', monospace; font-size: 28px; color: #fff; font-weight: 700;
+        }
+        .comp-bar-container {
+            flex: 1; display: flex; align-items: center; height: 36px;
+            position: relative;
+        }
+        .comp-bar-bg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.05); border-radius: 6px;
+        }
+        .comp-bar-left {
+            position: absolute; right: 50%; height: 100%;
+            background: linear-gradient(270deg, var(--primary-green), rgba(0, 255, 136, 0.3));
+            border-radius: 6px 0 0 6px; transition: width 0.5s;
+        }
+        .comp-bar-right {
+            position: absolute; left: 50%; height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), rgba(0, 191, 255, 0.3));
+            border-radius: 0 6px 6px 0; transition: width 0.5s;
+        }
+        .comp-label {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            font-family: 'Oswald', sans-serif; font-size: 16px; color: rgba(255,255,255,0.8);
+            text-transform: uppercase; letter-spacing: 2px;
+            background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 4px;
+            z-index: 2; white-space: nowrap;
+        }
+        .comp-val-right {
+            width: 120px; text-align: left; padding-left: 16px;
+            font-family: 'Roboto Mono', monospace; font-size: 28px; color: #fff; font-weight: 700;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: linear-gradient(90deg, rgba(0, 50, 30, 0.9), rgba(0, 30, 20, 0.9));
+            border: 1px solid var(--primary-green);
+            border-radius: 12px; padding: 20px 40px;
+            text-align: center;
+            font-family: 'Oswald', sans-serif; font-size: 32px;
+            color: var(--primary-green); letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="stadium-bg"></div>
+    <div class="light-streak top"></div>
+    <div class="light-streak middle"></div>
+    <div class="light-streak bottom-left"></div>
+    <div class="top-curve"></div>
+    <div class="logo-container"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+    <div class="main-banner"><span class="banner-title">RAILOKATTA</span><span class="banner-live">LIVE</span></div>
+
+    <div class="loading-overlay" id="loadingOverlay"><span class="loading-text">Connecting to score server...</span></div>
+
+    <div class="panel-container" id="panelContainer" style="display:none;">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">HEAD TO HEAD</div>
+                <div class="panel-subtitle" id="panelSubtitle">--</div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="teams-row">
+                <div class="team-block" id="team1Block">
+                    <div class="team-name" id="team1Name">--</div>
+                    <div class="team-score" id="team1Score">--</div>
+                    <div class="team-overs" id="team1Overs"></div>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="team-block" id="team2Block">
+                    <div class="team-name" id="team2Name">--</div>
+                    <div class="team-score" id="team2Score">--</div>
+                    <div class="team-overs" id="team2Overs"></div>
+                </div>
+            </div>
+            <div class="comparison-section" id="compSection"></div>
+            <div class="status-bar" id="statusBar">--</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
+        const REFRESH_INTERVAL = 1500;
+        const DEMO_FALLBACK_AFTER = 3;
+        let failedAttempts = 0, demoMode = false, isFirstLoad = true;
+
+        function getDemoData() {
+            return {
+                matchInfo: { description: 'India vs Pakistan, Super 4, Asia Cup 2025', status: 'Pakistan need 42 runs in 24 balls', state: 'InProgress' },
+                team1: { name: 'India', shortName: 'IND' }, team2: { name: 'Pakistan', shortName: 'PAK' },
+                currentInnings: 2,
+                innings: [
+                    { id: 1, battingTeam: 'India', score: 192, wickets: 5, overs: 20.0, runRate: '9.60',
+                      batsmen: [
+                        { name: 'Rohit Sharma', runs: 52, balls: 34, fours: 6, sixes: 3 },
+                        { name: 'Virat Kohli', runs: 82, balls: 53, fours: 8, sixes: 4 },
+                        { name: 'Suryakumar Yadav', runs: 18, balls: 10, fours: 2, sixes: 1 },
+                        { name: 'Hardik Pandya', runs: 24, balls: 12, fours: 1, sixes: 2 },
+                        { name: 'Ravindra Jadeja', runs: 8, balls: 5, fours: 1, sixes: 0 }
+                      ],
+                      extras: { total: 3 }
+                    },
+                    { id: 2, battingTeam: 'Pakistan', score: 151, wickets: 4, overs: 16.0, runRate: '9.44',
+                      batsmen: [
+                        { name: 'Babar Azam', runs: 72, balls: 48, fours: 8, sixes: 3 },
+                        { name: 'Mohammad Rizwan', runs: 34, balls: 25, fours: 4, sixes: 1 },
+                        { name: 'Fakhar Zaman', runs: 12, balls: 8, fours: 2, sixes: 0 },
+                        { name: 'Shadab Khan', runs: 28, balls: 18, fours: 2, sixes: 2 }
+                      ],
+                      extras: { total: 2 }
+                    }
+                ],
+                miniscore: { currentRunRate: 9.44, requiredRunRate: 10.50, target: 193, remRunsToWin: 42 },
+                timestamp: new Date().toISOString(), error: null
+            };
+        }
+
+        function countFromBatsmen(batsmen, key) {
+            return (batsmen || []).reduce((sum, b) => sum + (b[key] || 0), 0);
+        }
+
+        function processData(data) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('panelContainer').style.display = '';
+
+            const inn1 = data.innings?.[0];
+            const inn2 = data.innings?.[1];
+            const t1 = data.team1;
+            const t2 = data.team2;
+            const currentInn = data.currentInnings || 1;
+
+            document.getElementById('panelSubtitle').textContent = data.matchInfo?.description || '--';
+
+            // Teams
+            document.getElementById('team1Name').textContent = t1?.shortName || t1?.name || '--';
+            document.getElementById('team1Score').textContent = inn1 ? `${inn1.score}/${inn1.wickets}` : '--';
+            document.getElementById('team1Overs').textContent = inn1 ? `(${inn1.overs} ov)` : '';
+            document.getElementById('team2Name').textContent = t2?.shortName || t2?.name || '--';
+            document.getElementById('team2Score').textContent = inn2 ? `${inn2.score}/${inn2.wickets}` : '--';
+            document.getElementById('team2Overs').textContent = inn2 ? `(${inn2.overs} ov)` : '';
+
+            // Active team
+            document.getElementById('team1Block').className = 'team-block' + (currentInn === 1 ? ' batting' : '');
+            document.getElementById('team2Block').className = 'team-block' + (currentInn >= 2 ? ' batting' : '');
+
+            // Comparison stats
+            const stats = [];
+            if (inn1 && inn2) {
+                const fours1 = countFromBatsmen(inn1.batsmen, 'fours');
+                const fours2 = countFromBatsmen(inn2.batsmen, 'fours');
+                const sixes1 = countFromBatsmen(inn1.batsmen, 'sixes');
+                const sixes2 = countFromBatsmen(inn2.batsmen, 'sixes');
+
+                stats.push({ label: 'Run Rate', v1: parseFloat(inn1.runRate) || 0, v2: parseFloat(inn2.runRate) || 0, fmt: v => v.toFixed(2) });
+                stats.push({ label: 'Fours', v1: fours1, v2: fours2, fmt: v => v });
+                stats.push({ label: 'Sixes', v1: sixes1, v2: sixes2, fmt: v => v });
+                stats.push({ label: 'Wickets Lost', v1: inn1.wickets, v2: inn2.wickets, fmt: v => v });
+                stats.push({ label: 'Boundaries', v1: fours1 + sixes1, v2: fours2 + sixes2, fmt: v => v });
+                stats.push({ label: 'Extras', v1: inn1.extras?.total || 0, v2: inn2.extras?.total || 0, fmt: v => v });
+            } else if (inn1) {
+                const fours1 = countFromBatsmen(inn1.batsmen, 'fours');
+                const sixes1 = countFromBatsmen(inn1.batsmen, 'sixes');
+                stats.push({ label: 'Run Rate', v1: parseFloat(inn1.runRate) || 0, v2: 0, fmt: v => v.toFixed(2) });
+                stats.push({ label: 'Fours', v1: fours1, v2: 0, fmt: v => v });
+                stats.push({ label: 'Sixes', v1: sixes1, v2: 0, fmt: v => v });
+                stats.push({ label: 'Wickets Lost', v1: inn1.wickets, v2: 0, fmt: v => v });
+            }
+
+            const section = document.getElementById('compSection');
+            section.innerHTML = '';
+
+            stats.forEach(s => {
+                const max = Math.max(s.v1, s.v2, 1);
+                const pctL = (s.v1 / max) * 50;
+                const pctR = (s.v2 / max) * 50;
+
+                section.innerHTML += `
+                    <div class="comp-row">
+                        <span class="comp-val-left">${s.fmt(s.v1)}</span>
+                        <div class="comp-bar-container">
+                            <div class="comp-bar-bg"></div>
+                            <div class="comp-bar-left" style="width:${pctL}%"></div>
+                            <div class="comp-bar-right" style="width:${pctR}%"></div>
+                            <span class="comp-label">${s.label}</span>
+                        </div>
+                        <span class="comp-val-right">${s.fmt(s.v2)}</span>
+                    </div>
+                `;
+            });
+
+            // Status
+            document.getElementById('statusBar').textContent = data.matchInfo?.status || data.matchInfo?.result || '--';
+
+            isFirstLoad = false;
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                failedAttempts = 0;
+                if (demoMode) demoMode = false;
+                processData(data);
+            } catch (e) {
+                failedAttempts++;
+                if (failedAttempts >= DEMO_FALLBACK_AFTER && !demoMode) demoMode = true;
+                if (demoMode) processData(getDemoData());
+                else if (isFirstLoad) document.querySelector('.loading-text').textContent = `Connecting... (attempt ${failedAttempts})`;
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>

@@ -254,26 +254,49 @@
             document.getElementById('need').textContent = need;
         }
 
-        // Auto-fetch from local score server every 10 seconds
         const SERVER_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
 
         async function fetchLiveScore() {
             try {
                 const response = await fetch(SERVER_URL);
                 const data = await response.json();
-                updateScore(
-                    data.score || '--',
-                    data.overs || '-- ov',
-                    data.runRate || '--',
-                    data.target || '--',
-                    data.need || '--'
-                );
+
+                // Get current innings data from enriched score structure
+                const currentInn = data.innings && data.innings.length > 0
+                    ? data.innings[data.innings.length - 1] : null;
+                const mini = data.miniscore;
+
+                const score = currentInn
+                    ? `${currentInn.score}/${currentInn.wickets}`
+                    : '--';
+                const overs = currentInn
+                    ? `${currentInn.overs} ov`
+                    : '-- ov';
+                const runRate = mini?.currentRunRate
+                    ? parseFloat(mini.currentRunRate).toFixed(2)
+                    : (currentInn?.runRate || '--');
+                const target = mini?.target
+                    ? String(mini.target)
+                    : '--';
+
+                let need = '--';
+                if (mini?.remRunsToWin && mini.remRunsToWin > 0) {
+                    const ballsRem = mini.oversRemaining
+                        ? Math.round(parseFloat(mini.oversRemaining) * 6)
+                        : null;
+                    need = ballsRem
+                        ? `${mini.remRunsToWin} off ${ballsRem}`
+                        : `${mini.remRunsToWin} runs`;
+                } else if (data.matchInfo?.status) {
+                    need = data.matchInfo.status;
+                }
+
+                updateScore(score, overs, runRate, target, need);
             } catch (err) {
                 console.log('Waiting for score server...', err.message);
             }
         }
 
-        // Fetch immediately, then every 10 seconds
         fetchLiveScore();
         setInterval(fetchLiveScore, 1500);
     </script>

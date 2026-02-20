@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Partnership Tracker - RAILOKATTA LIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+        :root {
+            --primary-green: #00ff88;
+            --primary-blue: #00bfff;
+            --dark-bg: #0a1a0a;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --scoreboard-bg: rgba(0, 0, 0, 0.9);
+            --scoreboard-text: #ffffff;
+            --highlight-red: #ff0033;
+            --font-main: 'Montserrat', 'Arial Black', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Roboto Condensed', Arial, sans-serif; background: transparent; position: relative; }
+
+        .stadium-bg { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(0,30,15,0.6) 50%, var(--dark-bg) 100%); pointer-events: none; }
+        .light-streak { position: absolute; height: 4px; background: linear-gradient(90deg, transparent 0%, var(--primary-green) 50%, transparent 100%); opacity: 0.6; animation: slideRight 3s ease-in-out infinite; }
+        .light-streak.top { top: 50px; width: 800px; left: -800px; }
+        .light-streak.middle { top: 150px; width: 600px; left: -600px; background: linear-gradient(90deg, transparent 0%, var(--primary-blue) 50%, transparent 100%); animation-delay: 1s; }
+        .light-streak.bottom-left { bottom: 200px; width: 700px; right: -700px; animation: slideLeft 3s ease-in-out infinite; animation-delay: 2s; }
+        @keyframes slideRight { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(2500px); opacity: 0; } }
+        @keyframes slideLeft { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(-2500px); opacity: 0; } }
+        .top-curve { position: absolute; top: 0; left: 0; right: 0; height: 200px; background: linear-gradient(180deg, var(--overlay-dark) 0%, transparent 100%); border-bottom: 3px solid var(--primary-green); clip-path: ellipse(100% 100% at 50% 0%); }
+        .logo-container { position: absolute; top: 30px; left: 40px; width: 120px; height: 120px; background: transparent; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid var(--primary-green); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); animation: pulse 2s ease-in-out infinite; z-index: 10; }
+        .logo-container img { max-width: 100px; max-height: 100px; object-fit: contain; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); } 50% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.6); } }
+        .main-banner { position: absolute; top: 30px; right: 40px; background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); padding: 14px 40px; border-radius: 12px; border: 2px solid var(--primary-green); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); display: flex; align-items: center; gap: 15px; }
+        .banner-title { font-family: var(--font-display); font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-green); font-style: italic; }
+        .banner-live { background: var(--highlight-red); color: white; padding: 6px 18px; border-radius: 6px; font-size: 22px; font-weight: 900; animation: liveGlow 1.5s ease-in-out infinite; }
+        @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 20px var(--highlight-red); } 50% { box-shadow: 0 0 40px var(--highlight-red); } }
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-text { color: var(--primary-green); font-size: 28px; font-weight: 700; }
+
+        /* ========== PARTNERSHIP PANEL ========== */
+        .panel-container { position: absolute; top: 180px; left: 80px; right: 80px; bottom: 60px; display: flex; flex-direction: column; gap: 0; }
+
+        .panel-header {
+            background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%);
+            border: 2px solid var(--primary-green); border-bottom: none;
+            border-radius: 16px 16px 0 0; padding: 20px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .panel-title { font-family: var(--font-display); font-size: 48px; color: #fff; letter-spacing: 4px; text-shadow: 0 0 15px var(--primary-green); }
+        .panel-subtitle { font-family: 'Roboto Mono', monospace; font-size: 24px; color: var(--primary-green); }
+        .match-score-badge { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--primary-green); border-radius: 8px; padding: 8px 20px; font-family: 'Roboto Mono', monospace; font-size: 22px; color: #fff; }
+
+        .panel-body {
+            background: var(--scoreboard-bg);
+            border: 2px solid rgba(0, 255, 136, 0.3); border-top: none;
+            border-radius: 0 0 16px 16px; flex: 1;
+            padding: 40px; display: flex; flex-direction: column; gap: 30px;
+            overflow: hidden;
+        }
+
+        /* Current Partnership */
+        .current-partnership {
+            background: linear-gradient(135deg, rgba(0, 50, 30, 0.6), rgba(0, 30, 20, 0.6));
+            border: 2px solid var(--primary-green);
+            border-radius: 16px; padding: 30px 40px;
+        }
+        .cp-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .cp-label {
+            font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--primary-green);
+            text-transform: uppercase; letter-spacing: 3px;
+        }
+        .cp-wicket {
+            font-family: 'Roboto Mono', monospace; font-size: 22px; color: rgba(255,255,255,0.6);
+        }
+        .cp-runs {
+            font-family: var(--font-display); font-size: 96px; color: #fff;
+            text-align: center; letter-spacing: 4px;
+            text-shadow: 0 0 30px var(--primary-green);
+        }
+        .cp-balls { font-size: 36px; color: var(--primary-green); }
+
+        /* Progress bar */
+        .progress-container { margin: 20px 0; }
+        .progress-bar {
+            height: 12px; border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 6px;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-blue));
+            transition: width 0.5s ease;
+        }
+        .progress-labels {
+            display: flex; justify-content: space-between;
+            margin-top: 8px; font-size: 18px; color: rgba(255,255,255,0.5);
+        }
+
+        /* Batsmen in partnership */
+        .cp-batsmen {
+            display: flex; justify-content: center; gap: 60px; margin-top: 20px;
+        }
+        .cp-bat {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            background: rgba(0,0,0,0.3); border-radius: 12px; padding: 16px 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 280px;
+        }
+        .cp-bat.striker { border-color: var(--primary-green); }
+        .cp-bat-name { font-size: 28px; font-weight: 700; color: #fff; }
+        .cp-bat-score { font-family: 'Roboto Mono', monospace; font-size: 36px; color: var(--primary-green); }
+        .cp-bat-detail { font-size: 18px; color: rgba(255,255,255,0.5); }
+
+        /* FOW Timeline */
+        .fow-section {
+            flex: 1;
+        }
+        .fow-title {
+            font-family: 'Oswald', sans-serif; font-size: 24px; color: var(--primary-green);
+            text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px;
+        }
+        .fow-timeline {
+            display: flex; gap: 16px; flex-wrap: wrap;
+        }
+        .fow-item {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 14px 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            min-width: 140px;
+        }
+        .fow-wkt { font-family: var(--font-display); font-size: 28px; color: var(--highlight-red); }
+        .fow-score { font-family: 'Roboto Mono', monospace; font-size: 22px; color: #fff; }
+        .fow-name { font-size: 16px; color: rgba(255,255,255,0.5); }
+        .fow-overs { font-size: 14px; color: rgba(255,255,255,0.3); }
+
+        .no-data { color: rgba(255,255,255,0.3); font-size: 24px; text-align: center; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="stadium-bg"></div>
+    <div class="light-streak top"></div>
+    <div class="light-streak middle"></div>
+    <div class="light-streak bottom-left"></div>
+    <div class="top-curve"></div>
+    <div class="logo-container"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+    <div class="main-banner"><span class="banner-title">RAILOKATTA</span><span class="banner-live">LIVE</span></div>
+
+    <div class="loading-overlay" id="loadingOverlay"><span class="loading-text">Connecting to score server...</span></div>
+
+    <div class="panel-container" id="panelContainer" style="display:none;">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">PARTNERSHIP TRACKER</div>
+                <div class="panel-subtitle" id="panelSubtitle">--</div>
+            </div>
+            <div class="match-score-badge" id="scoreBadge">--</div>
+        </div>
+        <div class="panel-body">
+            <div class="current-partnership" id="currentPartnership">
+                <div class="cp-header">
+                    <span class="cp-label" id="cpLabel">Current Partnership</span>
+                    <span class="cp-wicket" id="cpWicket">--</span>
+                </div>
+                <div class="cp-runs"><span id="cpRuns">--</span> <span class="cp-balls" id="cpBalls"></span></div>
+                <div class="progress-container">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+                    <div class="progress-labels"><span id="progressStart">0</span><span id="progressEnd">--</span></div>
+                </div>
+                <div class="cp-batsmen" id="cpBatsmen"></div>
+            </div>
+            <div class="fow-section">
+                <div class="fow-title">FALL OF WICKETS</div>
+                <div class="fow-timeline" id="fowTimeline"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
+        const REFRESH_INTERVAL = 1500;
+        const DEMO_FALLBACK_AFTER = 3;
+        let failedAttempts = 0, demoMode = false, isFirstLoad = true;
+
+        function getDemoData() {
+            return {
+                matchInfo: { description: 'India vs Pakistan, Super 4, Asia Cup 2025', status: 'Pakistan need 42 runs in 24 balls', state: 'InProgress' },
+                currentInnings: 2,
+                innings: [
+                    { id: 2, battingTeam: 'Pakistan', score: 151, wickets: 4, overs: 16.0,
+                      fallOfWickets: [
+                        { wicket: 1, batsman: 'Fakhar Zaman', score: 32, overs: '3.4' },
+                        { wicket: 2, batsman: 'Mohammad Rizwan', score: 84, overs: '9.2' },
+                        { wicket: 3, batsman: 'Iftikhar Ahmed', score: 90, overs: '10.4' },
+                        { wicket: 4, batsman: 'Usman Khan', score: 98, overs: '11.5' }
+                      ]
+                    }
+                ],
+                miniscore: {
+                    partnership: { runs: 53, balls: 30 },
+                    batsmanStriker: { name: 'Babar Azam', runs: 72, balls: 48, fours: 8, sixes: 3, strikeRate: 150.0 },
+                    batsmanNonStriker: { name: 'Shadab Khan', runs: 28, balls: 18, fours: 2, sixes: 2, strikeRate: 155.6 },
+                    target: 193, remRunsToWin: 42
+                },
+                timestamp: new Date().toISOString(), error: null
+            };
+        }
+
+        function processData(data) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('panelContainer').style.display = '';
+
+            const currentInn = data.innings && data.innings.length > 0 ? data.innings[data.innings.length - 1] : null;
+            const mini = data.miniscore;
+            const fow = currentInn?.fallOfWickets || [];
+
+            const battingTeam = currentInn?.battingTeam || currentInn?.battingTeamShort || '--';
+            document.getElementById('panelSubtitle').textContent = battingTeam;
+            document.getElementById('scoreBadge').textContent = currentInn
+                ? `${battingTeam} ${currentInn.score}/${currentInn.wickets} (${currentInn.overs} ov)` : '--';
+
+            // Current partnership
+            if (mini?.partnership) {
+                const p = mini.partnership;
+                document.getElementById('cpRuns').textContent = p.runs;
+                document.getElementById('cpBalls').textContent = `(${p.balls} balls)`;
+
+                const wktNum = (currentInn?.wickets || 0) + 1;
+                document.getElementById('cpLabel').textContent = `${wktNum}${getOrdinal(wktNum)} Wicket Partnership`;
+                document.getElementById('cpWicket').textContent = currentInn ? `${currentInn.score}/${currentInn.wickets}` : '--';
+
+                // Progress bar: partnership contribution to total score
+                const totalScore = currentInn?.score || 0;
+                const pct = totalScore > 0 ? Math.min(100, (p.runs / totalScore) * 100) : 0;
+                document.getElementById('progressFill').style.width = pct + '%';
+                document.getElementById('progressStart').textContent = '0';
+                document.getElementById('progressEnd').textContent = totalScore + ' total';
+
+                // Batsmen
+                const batsmenDiv = document.getElementById('cpBatsmen');
+                batsmenDiv.innerHTML = '';
+                if (mini.batsmanStriker) {
+                    batsmenDiv.innerHTML += makeBatCard(mini.batsmanStriker, true);
+                }
+                if (mini.batsmanNonStriker) {
+                    batsmenDiv.innerHTML += makeBatCard(mini.batsmanNonStriker, false);
+                }
+            } else {
+                document.getElementById('cpRuns').textContent = '--';
+                document.getElementById('cpBalls').textContent = '';
+                document.getElementById('cpBatsmen').innerHTML = '';
+            }
+
+            // FOW
+            const fowDiv = document.getElementById('fowTimeline');
+            fowDiv.innerHTML = '';
+            if (fow.length === 0) {
+                fowDiv.innerHTML = '<div class="no-data">No wickets fallen</div>';
+            } else {
+                fow.forEach(w => {
+                    fowDiv.innerHTML += `
+                        <div class="fow-item">
+                            <span class="fow-wkt">${w.wicket}${getOrdinal(w.wicket)}</span>
+                            <span class="fow-score">${w.score}/${w.wicket}</span>
+                            <span class="fow-name">${w.batsman || '--'}</span>
+                            <span class="fow-overs">(${w.overs} ov)</span>
+                        </div>
+                    `;
+                });
+            }
+
+            isFirstLoad = false;
+        }
+
+        function makeBatCard(bat, isStriker) {
+            return `
+                <div class="cp-bat ${isStriker ? 'striker' : ''}">
+                    <span class="cp-bat-name">${isStriker ? '* ' : ''}${bat.name}</span>
+                    <span class="cp-bat-score">${bat.runs} (${bat.balls})</span>
+                    <span class="cp-bat-detail">${bat.fours || 0} fours, ${bat.sixes || 0} sixes | SR: ${typeof bat.strikeRate === 'number' ? bat.strikeRate.toFixed(1) : bat.strikeRate || '--'}</span>
+                </div>
+            `;
+        }
+
+        function getOrdinal(n) {
+            const s = ['th','st','nd','rd'], v = n % 100;
+            return s[(v-20)%10] || s[v] || s[0];
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                failedAttempts = 0;
+                if (demoMode) demoMode = false;
+                processData(data);
+            } catch (e) {
+                failedAttempts++;
+                if (failedAttempts >= DEMO_FALLBACK_AFTER && !demoMode) demoMode = true;
+                if (demoMode) processData(getDemoData());
+                else if (isFirstLoad) document.querySelector('.loading-text').textContent = `Connecting... (attempt ${failedAttempts})`;
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Bowling Attack - RAILOKATTA LIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+        :root {
+            --primary-green: #00ff88;
+            --primary-blue: #00bfff;
+            --dark-bg: #0a1a0a;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --scoreboard-bg: rgba(0, 0, 0, 0.9);
+            --scoreboard-text: #ffffff;
+            --highlight-red: #ff0033;
+            --font-main: 'Montserrat', 'Arial Black', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            font-family: 'Roboto Condensed', Arial, sans-serif;
+            background: transparent;
+            position: relative;
+        }
+
+        .stadium-bg {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(0,30,15,0.6) 50%, var(--dark-bg) 100%);
+            pointer-events: none;
+        }
+
+        .light-streak {
+            position: absolute;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, var(--primary-green) 50%, transparent 100%);
+            opacity: 0.6;
+            animation: slideRight 3s ease-in-out infinite;
+        }
+        .light-streak.top { top: 50px; width: 800px; left: -800px; }
+        .light-streak.middle {
+            top: 150px; width: 600px; left: -600px;
+            background: linear-gradient(90deg, transparent 0%, var(--primary-blue) 50%, transparent 100%);
+            animation-delay: 1s;
+        }
+        .light-streak.bottom-left {
+            bottom: 200px; width: 700px; right: -700px;
+            animation: slideLeft 3s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes slideRight {
+            0% { transform: translateX(0); opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { transform: translateX(2500px); opacity: 0; }
+        }
+        @keyframes slideLeft {
+            0% { transform: translateX(0); opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { transform: translateX(-2500px); opacity: 0; }
+        }
+
+        .top-curve {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 200px;
+            background: linear-gradient(180deg, var(--overlay-dark) 0%, transparent 100%);
+            border-bottom: 3px solid var(--primary-green);
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 30px; left: 40px;
+            width: 120px; height: 120px;
+            background: transparent;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-green);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+            z-index: 10;
+        }
+        .logo-container img { max-width: 100px; max-height: 100px; object-fit: contain; }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.6); }
+        }
+
+        .main-banner {
+            position: absolute;
+            top: 30px; right: 40px;
+            background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%);
+            padding: 14px 40px;
+            border-radius: 12px;
+            border: 2px solid var(--primary-green);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2);
+            display: flex; align-items: center; gap: 15px;
+        }
+        .banner-title {
+            font-family: var(--font-display);
+            font-size: 42px; font-weight: 900; color: #fff;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px var(--primary-green), 0 4px 10px rgba(0,0,0,0.8);
+            font-style: italic;
+        }
+        .banner-live {
+            background: var(--highlight-red); color: white;
+            padding: 6px 18px; border-radius: 6px;
+            font-size: 22px; font-weight: 900;
+            animation: liveGlow 1.5s ease-in-out infinite;
+        }
+        @keyframes liveGlow {
+            0%, 100% { box-shadow: 0 0 20px var(--highlight-red); }
+            50% { box-shadow: 0 0 40px var(--highlight-red); }
+        }
+
+        /* ========== LOADING ========== */
+        .loading-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--dark-bg);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; transition: opacity 0.5s;
+        }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-text { color: var(--primary-green); font-size: 28px; font-weight: 700; }
+
+        /* ========== MAIN PANEL ========== */
+        .panel-container {
+            position: absolute;
+            top: 180px; left: 80px; right: 80px; bottom: 60px;
+            display: flex; flex-direction: column; gap: 0;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%);
+            border: 2px solid var(--primary-green);
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            padding: 20px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 48px; color: #fff;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--primary-green);
+        }
+        .panel-subtitle {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 24px; color: var(--primary-green);
+        }
+        .match-score-badge {
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid var(--primary-green);
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 22px; color: #fff;
+        }
+
+        .panel-body {
+            background: var(--scoreboard-bg);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ========== TABLE ========== */
+        .bowl-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .bowl-table thead th {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary-green);
+            font-family: 'Oswald', sans-serif;
+            font-size: 22px; font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 16px 24px;
+            text-align: center;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+        }
+        .bowl-table thead th:first-child { text-align: left; padding-left: 40px; }
+
+        .bowl-table tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.3s;
+        }
+        .bowl-table tbody tr:hover { background: rgba(0, 255, 136, 0.05); }
+        .bowl-table tbody tr.active-bowler {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .bowl-table tbody td {
+            font-size: 28px; color: #fff;
+            padding: 18px 24px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .bowl-table tbody td:first-child {
+            text-align: left; padding-left: 40px;
+            font-family: 'Roboto Condensed', sans-serif;
+            font-size: 30px; font-weight: 700;
+        }
+
+        .bowler-name-cell { display: flex; align-items: center; gap: 12px; }
+        .active-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--primary-green);
+            box-shadow: 0 0 10px var(--primary-green);
+            animation: dotPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .econ-good { color: var(--primary-green); }
+        .econ-ok { color: #ffd700; }
+        .econ-bad { color: var(--highlight-red); }
+
+        .wickets-highlight {
+            background: rgba(255, 0, 51, 0.2);
+            border-radius: 6px;
+            padding: 4px 12px;
+            color: var(--highlight-red);
+            font-weight: 700;
+        }
+        .wickets-multi {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 0, 51, 0.2));
+            color: #ffd700;
+        }
+
+        /* ========== CURRENT SPELL ========== */
+        .spell-bar {
+            background: linear-gradient(90deg, rgba(0, 50, 30, 0.9), rgba(0, 30, 20, 0.9));
+            border-top: 2px solid var(--primary-green);
+            padding: 16px 40px;
+            display: flex; align-items: center; gap: 30px;
+            border-radius: 0 0 16px 16px;
+        }
+        .spell-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px; color: var(--primary-green);
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .spell-name {
+            font-size: 26px; font-weight: 700; color: #fff;
+        }
+        .spell-figures {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 26px; color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="stadium-bg"></div>
+    <div class="light-streak top"></div>
+    <div class="light-streak middle"></div>
+    <div class="light-streak bottom-left"></div>
+    <div class="top-curve"></div>
+
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    </div>
+    <div class="main-banner">
+        <span class="banner-title">RAILOKATTA</span>
+        <span class="banner-live">LIVE</span>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <span class="loading-text">Connecting to score server...</span>
+    </div>
+
+    <div class="panel-container" id="panelContainer" style="display:none;">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title" id="panelTitle">BOWLING ATTACK</div>
+                <div class="panel-subtitle" id="panelSubtitle">--</div>
+            </div>
+            <div class="match-score-badge" id="scoreBadge">--</div>
+        </div>
+        <div class="panel-body">
+            <table class="bowl-table">
+                <thead>
+                    <tr>
+                        <th>Bowler</th>
+                        <th>O</th>
+                        <th>M</th>
+                        <th>R</th>
+                        <th>W</th>
+                        <th>Econ</th>
+                    </tr>
+                </thead>
+                <tbody id="bowlBody"></tbody>
+            </table>
+        </div>
+        <div class="spell-bar" id="spellBar" style="display:none;">
+            <span class="spell-label">Current Bowler</span>
+            <span class="spell-name" id="spellName">--</span>
+            <span class="spell-figures" id="spellFigures">--</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
+        const REFRESH_INTERVAL = 1500;
+        const DEMO_FALLBACK_AFTER = 3;
+        let failedAttempts = 0;
+        let demoMode = false;
+        let isFirstLoad = true;
+
+        function getDemoData() {
+            return {
+                matchInfo: { description: 'India vs Pakistan, Super 4, Asia Cup 2025', format: 'T20', status: 'Pakistan need 42 runs in 24 balls', state: 'InProgress' },
+                team1: { name: 'India', shortName: 'IND' }, team2: { name: 'Pakistan', shortName: 'PAK' },
+                currentInnings: 2,
+                innings: [
+                    { id: 1, battingTeam: 'India', score: 192, wickets: 5, overs: 20.0, runRate: '9.60',
+                      bowlers: [
+                        { name: 'Shaheen Afridi', overs: '4.0', maidens: 0, runs: 38, wickets: 1, economy: 9.50 },
+                        { name: 'Naseem Shah', overs: '4.0', maidens: 0, runs: 42, wickets: 1, economy: 10.50 },
+                        { name: 'Haris Rauf', overs: '4.0', maidens: 0, runs: 48, wickets: 1, economy: 12.00 },
+                        { name: 'Shadab Khan', overs: '4.0', maidens: 0, runs: 32, wickets: 2, economy: 8.00 },
+                        { name: 'Imad Wasim', overs: '4.0', maidens: 1, runs: 28, wickets: 0, economy: 7.00 }
+                      ]
+                    },
+                    { id: 2, battingTeam: 'Pakistan', score: 151, wickets: 4, overs: 16.0, runRate: '9.44',
+                      bowlers: [
+                        { name: 'Jasprit Bumrah', overs: '3.0', maidens: 0, runs: 24, wickets: 2, economy: 8.00 },
+                        { name: 'Mohammed Siraj', overs: '4.0', maidens: 0, runs: 38, wickets: 0, economy: 9.50 },
+                        { name: 'Hardik Pandya', overs: '3.0', maidens: 0, runs: 32, wickets: 1, economy: 10.67 },
+                        { name: 'Kuldeep Yadav', overs: '4.0', maidens: 0, runs: 30, wickets: 1, economy: 7.50 },
+                        { name: 'Ravindra Jadeja', overs: '2.0', maidens: 0, runs: 25, wickets: 0, economy: 12.50 }
+                      ]
+                    }
+                ],
+                miniscore: {
+                    bowlerStriker: { name: 'Jasprit Bumrah', overs: 3.0, maidens: 0, runs: 24, wickets: 2, economy: 8.00 },
+                    bowlerNonStriker: { name: 'Hardik Pandya', overs: 3.0, maidens: 0, runs: 32, wickets: 1, economy: 10.67 }
+                },
+                timestamp: new Date().toISOString(), error: null
+            };
+        }
+
+        function processData(data) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('panelContainer').style.display = '';
+
+            const currentInn = data.innings && data.innings.length > 0 ? data.innings[data.innings.length - 1] : null;
+            const mini = data.miniscore;
+            const bowlers = currentInn?.bowlers || [];
+
+            // Header
+            const battingTeam = currentInn?.battingTeam || currentInn?.battingTeamShort || '--';
+            document.getElementById('panelTitle').textContent = 'BOWLING ATTACK';
+            document.getElementById('panelSubtitle').textContent = `vs ${battingTeam}`;
+            document.getElementById('scoreBadge').textContent = currentInn
+                ? `${battingTeam} ${currentInn.score}/${currentInn.wickets} (${currentInn.overs} ov)`
+                : '--';
+
+            // Current bowler name
+            const currentBowler = mini?.bowlerStriker?.name || '';
+
+            // Build table
+            const body = document.getElementById('bowlBody');
+            body.innerHTML = '';
+
+            if (bowlers.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.3);padding:40px;font-size:24px;">No bowling data available</td></tr>';
+                return;
+            }
+
+            bowlers.forEach(b => {
+                const isActive = b.name === currentBowler;
+                const econ = typeof b.economy === 'number' ? b.economy : parseFloat(b.economy) || 0;
+                const econClass = econ < 7 ? 'econ-good' : econ < 10 ? 'econ-ok' : 'econ-bad';
+                const wClass = b.wickets >= 3 ? 'wickets-highlight wickets-multi' : b.wickets >= 1 ? 'wickets-highlight' : '';
+
+                const tr = document.createElement('tr');
+                if (isActive) tr.className = 'active-bowler';
+                tr.innerHTML = `
+                    <td><div class="bowler-name-cell">${isActive ? '<span class="active-dot"></span>' : ''}${b.name}</div></td>
+                    <td>${b.overs}</td>
+                    <td>${b.maidens}</td>
+                    <td>${b.runs}</td>
+                    <td><span class="${wClass}">${b.wickets}</span></td>
+                    <td class="${econClass}">${econ.toFixed(2)}</td>
+                `;
+                body.appendChild(tr);
+            });
+
+            // Current spell bar
+            if (mini?.bowlerStriker) {
+                const bs = mini.bowlerStriker;
+                document.getElementById('spellBar').style.display = '';
+                document.getElementById('spellName').textContent = bs.name;
+                document.getElementById('spellFigures').textContent = `${bs.overs}-${bs.maidens}-${bs.runs}-${bs.wickets} (Econ: ${typeof bs.economy === 'number' ? bs.economy.toFixed(2) : bs.economy})`;
+            } else {
+                document.getElementById('spellBar').style.display = 'none';
+            }
+
+            isFirstLoad = false;
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                failedAttempts = 0;
+                if (demoMode) { demoMode = false; }
+                processData(data);
+            } catch (e) {
+                failedAttempts++;
+                if (failedAttempts >= DEMO_FALLBACK_AFTER && !demoMode) { demoMode = true; }
+                if (demoMode) { processData(getDemoData()); }
+                else if (isFirstLoad) {
+                    document.querySelector('.loading-text').textContent = `Connecting... (attempt ${failedAttempts})`;
+                }
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>

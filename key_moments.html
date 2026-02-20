@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Key Moments - RAILOKATTA LIVE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&family=Roboto+Mono:wght@400;500;700&family=Bebas+Neue&family=Montserrat:wght@700;900&display=swap');
+
+        :root {
+            --primary-green: #00ff88;
+            --primary-blue: #00bfff;
+            --dark-bg: #0a1a0a;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --scoreboard-bg: rgba(0, 0, 0, 0.9);
+            --highlight-red: #ff0033;
+            --font-main: 'Montserrat', 'Arial Black', sans-serif;
+            --font-display: 'Bebas Neue', 'Impact', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Roboto Condensed', Arial, sans-serif; background: transparent; position: relative; }
+
+        .stadium-bg { position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, var(--dark-bg) 0%, rgba(0,30,15,0.6) 50%, var(--dark-bg) 100%); pointer-events: none; }
+        .light-streak { position: absolute; height: 4px; background: linear-gradient(90deg, transparent 0%, var(--primary-green) 50%, transparent 100%); opacity: 0.6; animation: slideRight 3s ease-in-out infinite; }
+        .light-streak.top { top: 50px; width: 800px; left: -800px; }
+        .light-streak.middle { top: 150px; width: 600px; left: -600px; background: linear-gradient(90deg, transparent 0%, var(--primary-blue) 50%, transparent 100%); animation-delay: 1s; }
+        .light-streak.bottom-left { bottom: 200px; width: 700px; right: -700px; animation: slideLeft 3s ease-in-out infinite; animation-delay: 2s; }
+        @keyframes slideRight { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(2500px); opacity: 0; } }
+        @keyframes slideLeft { 0% { transform: translateX(0); opacity: 0.3; } 50% { opacity: 0.8; } 100% { transform: translateX(-2500px); opacity: 0; } }
+        .top-curve { position: absolute; top: 0; left: 0; right: 0; height: 200px; background: linear-gradient(180deg, var(--overlay-dark) 0%, transparent 100%); border-bottom: 3px solid var(--primary-green); clip-path: ellipse(100% 100% at 50% 0%); }
+        .logo-container { position: absolute; top: 30px; left: 40px; width: 120px; height: 120px; background: transparent; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid var(--primary-green); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); animation: pulse 2s ease-in-out infinite; z-index: 10; }
+        .logo-container img { max-width: 100px; max-height: 100px; object-fit: contain; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3); } 50% { box-shadow: 0 8px 32px rgba(0, 255, 136, 0.6); } }
+        .main-banner { position: absolute; top: 30px; right: 40px; background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); padding: 14px 40px; border-radius: 12px; border: 2px solid var(--primary-green); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 255, 136, 0.2); display: flex; align-items: center; gap: 15px; }
+        .banner-title { font-family: var(--font-display); font-size: 42px; font-weight: 900; color: #fff; letter-spacing: 3px; text-shadow: 0 0 20px var(--primary-green); font-style: italic; }
+        .banner-live { background: var(--highlight-red); color: white; padding: 6px 18px; border-radius: 6px; font-size: 22px; font-weight: 900; animation: liveGlow 1.5s ease-in-out infinite; }
+        @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 20px var(--highlight-red); } 50% { box-shadow: 0 0 40px var(--highlight-red); } }
+        .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--dark-bg); display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .loading-text { color: var(--primary-green); font-size: 28px; font-weight: 700; }
+
+        .panel-container { position: absolute; top: 180px; left: 80px; right: 80px; bottom: 60px; display: flex; flex-direction: column; }
+        .panel-header { background: linear-gradient(135deg, rgba(0, 50, 30, 0.95) 0%, rgba(0, 30, 20, 0.95) 100%); border: 2px solid var(--primary-green); border-bottom: none; border-radius: 16px 16px 0 0; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-title { font-family: var(--font-display); font-size: 48px; color: #fff; letter-spacing: 4px; text-shadow: 0 0 15px var(--primary-green); }
+        .panel-subtitle { font-family: 'Roboto Mono', monospace; font-size: 24px; color: var(--primary-green); }
+        .match-score-badge { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--primary-green); border-radius: 8px; padding: 8px 20px; font-family: 'Roboto Mono', monospace; font-size: 22px; color: #fff; }
+        .live-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--highlight-red); animation: liveGlow 1.5s ease-in-out infinite; margin-right: 8px; }
+
+        .panel-body { background: var(--scoreboard-bg); border: 2px solid rgba(0, 255, 136, 0.3); border-top: none; border-radius: 0 0 16px 16px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Event items */
+        .events-list { flex: 1; overflow: hidden; padding: 20px 0; }
+
+        .event-item {
+            display: flex; align-items: center; gap: 20px;
+            padding: 16px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.3s;
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .event-item:hover { background: rgba(0, 255, 136, 0.03); }
+        .event-item.latest { background: rgba(0, 255, 136, 0.08); border-left: 4px solid var(--primary-green); }
+
+        .event-badge {
+            min-width: 80px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-family: 'Oswald', sans-serif;
+            font-size: 18px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .badge-wicket { background: rgba(255, 0, 51, 0.3); color: var(--highlight-red); border: 1px solid var(--highlight-red); }
+        .badge-six { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700; }
+        .badge-four { background: rgba(0, 191, 255, 0.2); color: var(--primary-blue); border: 1px solid var(--primary-blue); }
+        .badge-default { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); }
+
+        .event-text { flex: 1; font-size: 24px; color: #fff; line-height: 1.4; }
+        .event-players { font-size: 18px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+        .no-data { color: rgba(255,255,255,0.3); font-size: 28px; text-align: center; padding: 80px; flex: 1; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="stadium-bg"></div>
+    <div class="light-streak top"></div>
+    <div class="light-streak middle"></div>
+    <div class="light-streak bottom-left"></div>
+    <div class="top-curve"></div>
+    <div class="logo-container"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+    <div class="main-banner"><span class="banner-title">RAILOKATTA</span><span class="banner-live">LIVE</span></div>
+
+    <div class="loading-overlay" id="loadingOverlay"><span class="loading-text">Connecting to score server...</span></div>
+
+    <div class="panel-container" id="panelContainer" style="display:none;">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title"><span class="live-dot"></span>KEY MOMENTS</div>
+                <div class="panel-subtitle" id="panelSubtitle">--</div>
+            </div>
+            <div class="match-score-badge" id="scoreBadge">--</div>
+        </div>
+        <div class="panel-body">
+            <div class="events-list" id="eventsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = (window.location.protocol === 'file:' ? 'http://localhost:5555' : window.location.origin) + '/score';
+        const REFRESH_INTERVAL = 1500;
+        const DEMO_FALLBACK_AFTER = 3;
+        let failedAttempts = 0, demoMode = false, isFirstLoad = true;
+
+        function getDemoData() {
+            return {
+                matchInfo: { description: 'India vs Pakistan, Super 4, Asia Cup 2025', status: 'Pakistan need 42 runs in 24 balls', state: 'InProgress' },
+                currentInnings: 2,
+                innings: [{ id: 2, battingTeam: 'Pakistan', score: 151, wickets: 4, overs: 16.0 }],
+                recentCommentary: [
+                    { type: 'six', text: 'Shadab Khan smashes it over long-on for a maximum!', event: 'six', batsman: 'Shadab Khan', bowler: 'Bumrah' },
+                    { type: 'four', text: 'Babar Azam drives beautifully through covers for four', event: 'four', batsman: 'Babar Azam', bowler: 'Siraj' },
+                    { type: 'wicket', text: 'GONE! Usman Khan caught at slip by Iyer off Bumrah', event: 'wicket', batsman: 'Usman Khan', bowler: 'Bumrah' },
+                    { type: 'wicket', text: 'Iftikhar Ahmed caught at mid-wicket by Jadeja off Kuldeep', event: 'wicket', batsman: 'Iftikhar Ahmed', bowler: 'Kuldeep' },
+                    { type: 'six', text: 'Babar Azam launches it over midwicket for a huge six!', event: 'six', batsman: 'Babar Azam', bowler: 'Jadeja' },
+                    { type: 'four', text: 'Rizwan cuts hard behind point for a boundary', event: 'four', batsman: 'Mohammad Rizwan', bowler: 'Pandya' },
+                    { type: 'wicket', text: 'Mohammad Rizwan edges to Kohli at slip off Bumrah', event: 'wicket', batsman: 'Mohammad Rizwan', bowler: 'Bumrah' },
+                    { type: 'four', text: 'Babar flicks off the pads, races to the boundary', event: 'four', batsman: 'Babar Azam', bowler: 'Siraj' },
+                    { type: 'wicket', text: 'Fakhar Zaman clean bowled by a Pandya yorker!', event: 'wicket', batsman: 'Fakhar Zaman', bowler: 'Pandya' },
+                    { type: 'six', text: 'Fakhar Zaman goes big, cleared the rope at deep midwicket', event: 'six', batsman: 'Fakhar Zaman', bowler: 'Kuldeep' }
+                ],
+                timestamp: new Date().toISOString(), error: null
+            };
+        }
+
+        function getEventBadge(type, event) {
+            const ev = (event || type || '').toLowerCase();
+            if (ev.includes('wicket') || ev.includes('w')) return { cls: 'badge-wicket', text: 'WICKET' };
+            if (ev.includes('six') || ev === '6') return { cls: 'badge-six', text: 'SIX' };
+            if (ev.includes('four') || ev === '4') return { cls: 'badge-four', text: 'FOUR' };
+            return { cls: 'badge-default', text: type || 'BALL' };
+        }
+
+        function processData(data) {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('panelContainer').style.display = '';
+
+            const currentInn = data.innings && data.innings.length > 0 ? data.innings[data.innings.length - 1] : null;
+            document.getElementById('panelSubtitle').textContent = data.matchInfo?.description || '--';
+            document.getElementById('scoreBadge').textContent = currentInn
+                ? `${currentInn.battingTeam || currentInn.battingTeamShort || '--'} ${currentInn.score}/${currentInn.wickets} (${currentInn.overs} ov)` : '--';
+
+            const commentary = data.recentCommentary || [];
+            // Filter to key moments only (wickets, fours, sixes)
+            const keyMoments = commentary.filter(c => {
+                const ev = (c.event || c.type || '').toLowerCase();
+                return ev.includes('wicket') || ev.includes('four') || ev.includes('six') || ev.includes('w') || ev === '4' || ev === '6';
+            });
+
+            const list = document.getElementById('eventsList');
+            list.innerHTML = '';
+
+            if (keyMoments.length === 0) {
+                list.innerHTML = '<div class="no-data">No key moments yet — waiting for boundaries and wickets</div>';
+                return;
+            }
+
+            keyMoments.slice(0, 12).forEach((c, idx) => {
+                const badge = getEventBadge(c.type, c.event);
+                const item = document.createElement('div');
+                item.className = 'event-item' + (idx === 0 ? ' latest' : '');
+                item.innerHTML = `
+                    <span class="event-badge ${badge.cls}">${badge.text}</span>
+                    <div>
+                        <div class="event-text">${c.text || '--'}</div>
+                        ${c.batsman || c.bowler ? `<div class="event-players">${c.batsman || ''} ${c.bowler ? '/ ' + c.bowler : ''}</div>` : ''}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            isFirstLoad = false;
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                failedAttempts = 0;
+                if (demoMode) demoMode = false;
+                processData(data);
+            } catch (e) {
+                failedAttempts++;
+                if (failedAttempts >= DEMO_FALLBACK_AFTER && !demoMode) demoMode = true;
+                if (demoMode) processData(getDemoData());
+                else if (isFirstLoad) document.querySelector('.loading-text').textContent = `Connecting... (attempt ${failedAttempts})`;
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>
